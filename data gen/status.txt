@@ -1,0 +1,2 @@
+need to change it so that the different runs are saved as colums or rows
+ie. you need to be able to tell the difference between the runs
