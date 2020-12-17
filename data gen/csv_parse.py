@@ -3,6 +3,9 @@ import numpy as np
 import os
 import getopt, sys
 
+#both speficied in THZ
+first_freq = 191.6
+last_freq = 195.9
 
 def main():
     file_name = input_arguments(sys.argv[1:])
@@ -33,6 +36,10 @@ def main():
 
         #change to numpy, easier to manipulate data
         array = df.to_numpy()  
+
+        array.transpose()
+        array = arrange_by_run(array)
+
         #combine all data in one big numpy array
         combined = np.concatenate((combined, array))
         
@@ -41,7 +48,9 @@ def main():
     combined = combined.transpose()     #transpose
     arranged = arrange_by_run(combined)
 
+    
     arranged_df = pd.DataFrame(arranged) #convert list to dataframe
+    print(arranged_df)
     arranged_df.to_csv('runs.csv', header=None, index=False) #save dataframe as .csv
 
         
