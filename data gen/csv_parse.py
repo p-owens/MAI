@@ -17,7 +17,7 @@ def main():
                         ) 
 
     #create an empty np array to combine all the data in
-    combined = np.zeros([1, 2])
+    combined = np.zeros([1, 44])
 
     #loop through each chunk of data
     for df in dfs:
@@ -33,15 +33,28 @@ def main():
 
         #change to numpy, easier to manipulate data
         array = df.to_numpy()  
+        
+        array = array.transpose()
+        array = arrange_by_run(array)
+        arr = np.array(array)
+        print(arr)
+
+
+
+        
+   
+
+
         #combine all data in one big numpy array
         combined = np.concatenate((combined, array))
         
 
     combined = combined[1:, :]          #get rid of first row with 0's
-    combined = combined.transpose()     #transpose
-    arranged = arrange_by_run(combined)
+    #combined = combined.transpose()     #transpose
+    #arranged = arrange_by_run(combined)
 
-    arranged_df = pd.DataFrame(arranged) #convert list to dataframe
+    arranged_df = pd.DataFrame(combined) #convert list to dataframe
+    print(arranged_df)
     arranged_df.to_csv('runs.csv', header=None, index=False) #save dataframe as .csv
 
         
