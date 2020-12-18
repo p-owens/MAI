@@ -38,17 +38,22 @@ def main():
         df = df[df.dBm < 100]   
 
         #change to numpy, easier to manipulate data
-        array = df.to_numpy()  
-        
+        array = df.to_numpy()          
 
         #combine all data in one big numpy array
         combined = np.concatenate((combined, array))
         
 
     combined = combined[1:, :]          #get rid of first row with 0's
+    
+    combined[:,0] = (combined[:,0] - lower_freq) * 10 
+    combined[:,1] = np.power(10, combined[:,1] / 10)
+    
+    
+
     combined = combined.transpose()     #transpose
     arranged = arrange_by_run(combined)
-    #fill_vals(arranged)
+    arranged = fill_vals(arranged)
     print(arranged)
     arranged_df = pd.DataFrame(arranged) #convert list to dataframe
     
@@ -99,11 +104,29 @@ def input_arguments(ip_args):
         return  str(ip_args[0])
 
 def fill_vals(arr):
+
+    pos = arr[0::2][:]
+    val  = arr[1::2][:]
+    
     
     complete = np.zeros([int((len(arr) * 1.5)), len(freq_rng)])
     complete[0::3,:] = freq_rng
-    complete[1::3,:] = 1
+    #complete[1::3,:] = 1
+
+    outputs = np.zeros([len(pos), len(freq_rng)])
+    inputs = np.zeros([len(pos), len(freq_rng)])
+
+    for i in range(len(pos)):
+        for j in range(len(pos[i])):
+            outputs[i, int(pos[i][j])] = val[i][j]
+            inputs[i, int(pos[i][j])] = bool(val[i][j])
+
+    complete[2::3,:] = outputs
+    complete[1::3,:] = inputs
     
+    
+    return complete
+   
 
     
    
