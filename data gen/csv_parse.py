@@ -4,6 +4,12 @@ import os
 import getopt, sys
 
 
+lower_freq = 191.6
+upper_freq = 195.9
+step_size = 0.1
+freq_rng = np.arange(lower_freq, upper_freq, step_size)
+
+
 def main():
     file_name = input_arguments(sys.argv[1:])
 
@@ -17,7 +23,7 @@ def main():
                         ) 
 
     #create an empty np array to combine all the data in
-    combined = np.zeros([1, 44])
+    combined = np.zeros([1, 2])
 
     #loop through each chunk of data
     for df in dfs:
@@ -34,27 +40,18 @@ def main():
         #change to numpy, easier to manipulate data
         array = df.to_numpy()  
         
-        array = array.transpose()
-        array = arrange_by_run(array)
-        arr = np.array(array)
-        print(arr)
-
-
-
-        
-   
-
 
         #combine all data in one big numpy array
         combined = np.concatenate((combined, array))
         
 
     combined = combined[1:, :]          #get rid of first row with 0's
-    #combined = combined.transpose()     #transpose
-    #arranged = arrange_by_run(combined)
-
-    arranged_df = pd.DataFrame(combined) #convert list to dataframe
-    print(arranged_df)
+    combined = combined.transpose()     #transpose
+    arranged = arrange_by_run(combined)
+    #fill_vals(arranged)
+    print(arranged)
+    arranged_df = pd.DataFrame(arranged) #convert list to dataframe
+    
     arranged_df.to_csv('runs.csv', header=None, index=False) #save dataframe as .csv
 
         
@@ -100,6 +97,18 @@ def input_arguments(ip_args):
     else:
         print("ERROR: Only specify one file at a time.\n Or specify no files to default to data.csv")
         return  str(ip_args[0])
+
+def fill_vals(arr):
+    
+    complete = np.zeros([int((len(arr) * 1.5)), len(freq_rng)])
+    complete[0::3,:] = freq_rng
+    complete[1::3,:] = 1
+    
+
+    
+   
+    
+    
 
 #call main
 if __name__ == '__main__':

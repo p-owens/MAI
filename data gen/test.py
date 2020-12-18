@@ -1,19 +1,11 @@
 import pandas as pd
 import os
-
-os.chdir(os.path.dirname(__file__)) # get cwd
-df = pd.read_csv('fdata.csv',                        
-                        header=6,
-                        names=['THz', 'dBm', 'disc'],
-                        chunksize=1000, #probably need to include "chunksize=1000" when dealing with actual file
-                        ) 
-
-#bigdata = pd.concat([dfs in df], ignore_index=True, sort=False)
+import numpy as np
 
 
-chunks = iter(df) 
 
-for x in chunks:
-    print(x)
-
-                
+lower_freq = 191.6
+upper_freq = 195.9
+step_size = 0.1
+freq_rng = np.arange(lower_freq, upper_freq, step_size)
+print(len(freq_rng))
