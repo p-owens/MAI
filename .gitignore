@@ -5,4 +5,4 @@
 test.py
 
 do track the training data 
-!data gen/vpi_runs
+/data gen/!vpi_runs
