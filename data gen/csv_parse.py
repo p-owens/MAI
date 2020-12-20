@@ -11,53 +11,59 @@ freq_rng = np.arange(lower_freq, upper_freq, step_size)
 
 
 def main():
-    file_name = input_arguments(sys.argv[1:])
+    #file_name = input_arguments(sys.argv[1:])
 
-    os.chdir(os.path.dirname(__file__)) # get cwd
+    #os.chdir(os.path.dirname(__file__)) # get cwd
 
-    #load datafile
-    dfs = pd.read_csv(file_name,                        
-                        header=6,
-                        names=['THz', 'dBm', 'disc'],
-                        chunksize=1_000_000, #read the csv file in chunks of 1,000,000
-                        ) 
+    path = os.path.dirname(__file__) + "/test"
+    os.chdir(path)
+    files = os.listdir(os.getcwd())
 
     #create an empty np array to combine all the data in
     combined = np.zeros([1, 2])
 
-    #loop through each chunk of data
-    for df in dfs:
-        # drop the second freq col for the noise bins
-        df = df.drop(columns=['disc'])      
+    for i in range(len(files)):
 
-        #drop keywords
-        df = remove_kw(df)
-        #change data in df to be numeric
-        df = df.apply(pd.to_numeric)
-        #get rid of any col with power greather than 100 dBm (noise)
-        df = df[df.dBm < 100]   
+        #load datafile
+        dfs = pd.read_csv(files[i],                        
+                            header=6,
+                            names=['THz', 'dBm', 'disc'],
+                            chunksize=1_000_000, #read the csv file in chunks of 1,000,000
+                            )         
 
-        #change to numpy, easier to manipulate data
-        array = df.to_numpy()          
+        #loop through each chunk of data
+        for df in dfs:
+            # drop the second freq col for the noise bins
+            df = df.drop(columns=['disc'])      
 
-        #combine all data in one big numpy array
-        combined = np.concatenate((combined, array))
-        
+            #drop keywords
+            df = remove_kw(df)
+            #change data in df to be numeric
+            df = df.apply(pd.to_numeric)
+            #get rid of any col with power greather than 100 dBm (noise)
+            df = df[df.dBm < 100]   
 
+            #change to numpy, easier to manipulate data
+            array = df.to_numpy()          
+            #combine all data in one big numpy array
+            combined = np.concatenate((combined, array))
+    
     combined = combined[1:, :]          #get rid of first row with 0's
     
-    combined[:,0] = (combined[:,0] - lower_freq) * 10 
-    combined[:,1] = np.power(10, combined[:,1] / 10)
-    
+    combined[:,0] = (combined[:,0] - lower_freq) * 10 #convert freq to ch. num.
+    combined[:,1] = np.power(10, combined[:,1] / 10)   #convert output power to mW
     
 
     combined = combined.transpose()     #transpose
-    arranged = arrange_by_run(combined)
-    arranged = fill_vals(arranged)
-    print(arranged)
-    arranged_df = pd.DataFrame(arranged) #convert list to dataframe
+    #arranges the 2 row matrix in the N rows corresponding to the number of runs
+    arranged = arrange_by_run(combined) 
+    inputs, outputs = fill_vals(arranged)      #fill with zeros in nessicary locatoins
+    inputs_df = pd.DataFrame(inputs) #convert list to dataframe
+    outputs_df = pd.DataFrame(outputs) #convert list to dataframe
     
-    arranged_df.to_csv('runs.csv', header=None, index=False) #save dataframe as .csv
+    #save dataframe as .csv
+    inputs_df.to_csv(os.path.dirname(__file__) + '/x_val.csv', header=None, index=False) 
+    outputs_df.to_csv(os.path.dirname(__file__) + '/y_val.csv', header=None, index=False) 
 
         
 
@@ -106,12 +112,10 @@ def input_arguments(ip_args):
 def fill_vals(arr):
 
     pos = arr[0::2][:]
-    val  = arr[1::2][:]
+    val  = arr[1::2][:]    
     
-    
-    complete = np.zeros([int((len(arr) * 1.5)), len(freq_rng)])
-    complete[0::3,:] = freq_rng
-    #complete[1::3,:] = 1
+    complete = np.zeros([int((len(arr))), len(freq_rng)])
+    complete[0::2,:] = freq_rng
 
     outputs = np.zeros([len(pos), len(freq_rng)])
     inputs = np.zeros([len(pos), len(freq_rng)])
@@ -121,18 +125,12 @@ def fill_vals(arr):
             outputs[i, int(pos[i][j])] = val[i][j]
             inputs[i, int(pos[i][j])] = bool(val[i][j])
 
-    complete[2::3,:] = outputs
-    complete[1::3,:] = inputs
+    #complete[2::3,:] = outputs
+    complete[1::2,:] = inputs
+    
+    return complete, outputs   
     
     
-    return complete
-   
-
-    
-   
-    
-    
-
 #call main
 if __name__ == '__main__':
     main()
