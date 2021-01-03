@@ -14,13 +14,15 @@ freq_rng = np.arange(lower_freq, upper_freq, step_size)
 
 
 def main():
-    #file_name = input_arguments(sys.argv[1:])
+    folder_name = input_arguments(sys.argv[1:])
 
     #os.chdir(os.path.dirname(__file__)) # get cwd
 
-    path = os.path.dirname(__file__) + "/test"
+    path = os.path.dirname(__file__) + "/" + folder_name
     os.chdir(path)
     files = os.listdir(os.getcwd())
+    for x in files:
+        print(x + "\n")
 
     #create an empty np array to combine all the data in
     combined = np.zeros([1, 2])
@@ -31,7 +33,12 @@ def main():
         dfs = pd.read_csv(files[i],                        
                             header=6,
                             names=['THz', 'dBm', 'disc'],
-                            chunksize=1_000_000, #read the csv file in chunks of 1,000,000
+                            chunksize=1_000_000, #read the csv file in chunks of 1,000,000#
+                            comment='#',
+                            sep=',',
+                            decimal='.'
+
+                            #error_bad_lines=False
                             )         
 
         #loop through each chunk of data
@@ -105,7 +112,7 @@ def arrange_by_run(arr):
 def input_arguments(ip_args):
     #function to allow the input argument to be specified
     if len(ip_args) == 0:
-        return "data.csv"
+        return "/vpi_runs"
     elif len(ip_args) == 1:
         return str(ip_args[0])
     else:
