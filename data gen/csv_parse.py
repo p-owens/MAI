@@ -121,6 +121,7 @@ def input_arguments(ip_args):
         return  str(ip_args[0])
 
 def fill_vals(arr):
+    #function to construct the final output data
 
     pos = arr[0::2][:]
     val  = arr[1::2][:]    
@@ -136,7 +137,8 @@ def fill_vals(arr):
             outputs[i, int(pos[i][j])] = val[i][j]
             inputs[i, int(pos[i][j])] = bool(val[i][j])
     
-    inputs = inputs[:,:] * input_pow
+    #used to convert the input to their actual input values
+    #inputs = inputs[:,:] * input_pow
 
 
     #complete[2::3,:] = outputs
