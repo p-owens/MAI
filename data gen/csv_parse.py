@@ -10,6 +10,7 @@ last_freq = 195.9
 lower_freq = 191.6
 upper_freq = 195.9
 step_size = 0.1
+input_pow = 0.000_05     #0.05mW
 freq_rng = np.arange(lower_freq, upper_freq, step_size)
 
 
@@ -134,6 +135,9 @@ def fill_vals(arr):
         for j in range(len(pos[i])):
             outputs[i, int(pos[i][j])] = val[i][j]
             inputs[i, int(pos[i][j])] = bool(val[i][j])
+    
+    inputs = inputs[:,:] * input_pow
+
 
     #complete[2::3,:] = outputs
     complete[1::2,:] = inputs
