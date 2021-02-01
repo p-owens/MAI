@@ -13,6 +13,13 @@ step_size = 0.1
 input_pow = 0.000_05     #0.05mW
 freq_rng = np.arange(lower_freq, upper_freq, step_size)
 
+#you can specify a folder to search for .csv files in when calling 
+#the scrips, just add the name of the folder to the end of the
+#script call
+
+
+
+
 
 def main():
     folder_name = input_arguments(sys.argv[1:])
