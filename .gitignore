@@ -6,6 +6,7 @@ test.py
 
 #do track the training data 
 !/data gen/vpi_runs/*
+!/data gen/vpi_runs/*
 
 #ignore the results files in the parent dir
 #but not in the data gen dir
