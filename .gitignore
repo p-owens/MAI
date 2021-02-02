@@ -15,3 +15,6 @@ test.py
 
 /data gen/x_val.csv
 /data gen/y_val.csv
+
+
+!/all_mean_shap.csv
