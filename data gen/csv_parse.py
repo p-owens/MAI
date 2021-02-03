@@ -37,34 +37,36 @@ def main():
 
     for i in range(len(files)):
 
-        #load datafile
-        dfs = pd.read_csv(files[i],                        
-                            header=6,
-                            names=['THz', 'dBm', 'disc'],
-                            chunksize=1_000_000, #read the csv file in chunks of 1,000,000#
-                            comment='#',
-                            sep=',',
-                            decimal='.'
+        #we only want .csv files      
+        if(files[i].__contains__('.csv')):            
+            #load datafile
+            dfs = pd.read_csv(files[i],                        
+                                #header=6,
+                                names=['THz', 'dBm', 'disc'],
+                                chunksize=1_000_000, #read the csv file in chunks of 1,000,000#
+                                comment='#',
+                                sep=',',
+                                decimal='.'
 
-                            #error_bad_lines=False
-                            )         
+                                #error_bad_lines=False
+                                )         
 
-        #loop through each chunk of data
-        for df in dfs:
-            # drop the second freq col for the noise bins
-            df = df.drop(columns=['disc'])      
+            #loop through each chunk of data
+            for df in dfs:
+                # drop the second freq col for the noise bins
+                df = df.drop(columns=['disc'])      
 
-            #drop keywords
-            df = remove_kw(df)
-            #change data in df to be numeric
-            df = df.apply(pd.to_numeric)
-            #get rid of any col with power greather than 100 dBm (noise)
-            df = df[df.dBm < 100]   
+                #drop keywords
+                df = remove_kw(df)
+                #change data in df to be numeric
+                df = df.apply(pd.to_numeric)
+                #get rid of any col with power greather than 100 dBm (noise)
+                df = df[df.dBm < 100]   
 
-            #change to numpy, easier to manipulate data
-            array = df.to_numpy()          
-            #combine all data in one big numpy array
-            combined = np.concatenate((combined, array))
+                #change to numpy, easier to manipulate data
+                array = df.to_numpy()          
+                #combine all data in one big numpy array
+                combined = np.concatenate((combined, array))
     
     combined = combined[1:, :]          #get rid of first row with 0's
     
@@ -74,8 +76,14 @@ def main():
 
     combined = combined.transpose()     #transpose
     #arranges the 2 row matrix in the N rows corresponding to the number of runs
+    
     arranged = arrange_by_run(combined) 
+    #for i in range(50):
+    #    print(arranged[i][0:3])
+        
+
     inputs, outputs = fill_vals(arranged)      #fill with zeros in nessicary locatoins
+    
     inputs_df = pd.DataFrame(inputs) #convert list to dataframe
     outputs_df = pd.DataFrame(outputs) #convert list to dataframe
     
@@ -130,19 +138,21 @@ def input_arguments(ip_args):
 def fill_vals(arr):
     #function to construct the final output data
 
-    pos = arr[0::2][:]
-    val  = arr[1::2][:]    
-    
+    pos = arr[0::2][:]    
+    val  = arr[1::2][:] 
+
     complete = np.zeros([int((len(arr))), len(freq_rng)])
     complete[0::2,:] = freq_rng
+
+    
 
     outputs = np.zeros([len(pos), len(freq_rng)])
     inputs = np.zeros([len(pos), len(freq_rng)])
 
     for i in range(len(pos)):
         for j in range(len(pos[i])):
-            outputs[i, int(pos[i][j])] = val[i][j]
-            inputs[i, int(pos[i][j])] = bool(val[i][j])
+            outputs[i, np.round(pos[i][j]).astype(np.int64)] = val[i][j]
+            inputs[i, np.round(pos[i][j]).astype(np.int64)] = bool(val[i][j])
     
     #used to convert the input to their actual input values
     #inputs = inputs[:,:] * input_pow
@@ -150,7 +160,9 @@ def fill_vals(arr):
 
     #complete[2::3,:] = outputs
     complete[1::2,:] = inputs
+
     
+
     return complete, outputs   
     
     
