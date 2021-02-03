@@ -29,8 +29,7 @@ def main():
     path = os.path.dirname(__file__) + "/" + folder_name
     os.chdir(path)
     files = os.listdir(os.getcwd())
-    for x in files:
-        print(x + "\n")
+    
 
     #create an empty np array to combine all the data in
     combined = np.zeros([1, 2])
@@ -38,7 +37,9 @@ def main():
     for i in range(len(files)):
 
         #we only want .csv files      
-        if(files[i].__contains__('.csv')):            
+        if(files[i].__contains__('.csv')):  
+            print(files[i])
+
             #load datafile
             dfs = pd.read_csv(files[i],                        
                                 #header=6,
@@ -88,8 +89,8 @@ def main():
     outputs_df = pd.DataFrame(outputs) #convert list to dataframe
     
     #save dataframe as .csv
-    inputs_df.to_csv(os.path.dirname(__file__) + '/x_val.csv', header=None, index=False) 
-    outputs_df.to_csv(os.path.dirname(__file__) + '/y_val.csv', header=None, index=False) 
+    inputs_df.to_csv(path + '/x_val.csv', header=None, index=False) #os.path.dirname(__file__)
+    outputs_df.to_csv(path + '/y_val.csv', header=None, index=False)  #os.path.dirname(__file__)
 
         
 
