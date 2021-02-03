@@ -1,5 +1,5 @@
-#ignore all .csv files
-*.csv
+#ignore all .csv files - removed
+
 
 #ignore test.py
 test.py
