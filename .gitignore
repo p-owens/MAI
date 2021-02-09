@@ -1,4 +1,6 @@
 #ignore all .csv files - removed
+#ignore all .xls files
+*.xls
 
 
 #ignore test.py
