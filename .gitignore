@@ -2,6 +2,8 @@
 #ignore all .xls files
 *.xls
 
+testing.ipynb
+
 
 #ignore test.py
 test.py
