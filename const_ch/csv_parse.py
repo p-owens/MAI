@@ -150,13 +150,20 @@ def fill_vals(arr):
     outputs = np.zeros([len(pos), len(freq_rng)])
     inputs = np.zeros([len(pos), len(freq_rng)])
 
+    print(np.shape(val[0]), "\n\n")
+    print(np.shape(pos[0]), "\n\n")
+
+
     for i in range(len(pos)):
         for j in range(len(pos[i])):
+            print(i, "\n")
             outputs[i, np.round(pos[i][j]).astype(np.int64)] = val[i][j]
             inputs[i, np.round(pos[i][j]).astype(np.int64)] = bool(val[i][j])
     
     #used to convert the input to their actual input values
     #inputs = inputs[:,:] * input_pow
+
+    
 
 
     #complete[2::3,:] = outputs
