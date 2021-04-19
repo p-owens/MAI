@@ -23,3 +23,7 @@ test.py
 
 !/all_mean_shap.csv
 /data gen/done_ch.txt
+
+
+*.DS_Store
+.DS_Store
